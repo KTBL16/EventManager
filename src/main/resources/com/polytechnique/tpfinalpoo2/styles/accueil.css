@@ -1,0 +1,26 @@
+.label-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #E95700;
+}
+
+.white-orange-shadow {
+    -fx-background-color: white;
+    -fx-text-fill: black;
+    -fx-font-size: 15px;
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -fx-padding: 12 30; /* Plus d’espace intérieur */
+    -fx-effect: dropshadow(three-pass-box, rgba(233,87,0,0.5), 8, 0.0, 2, 2);
+}
+
+
+.delete-button {
+    -fx-background-color: #E95700;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -fx-padding: 6 18;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.25), 6, 0.0, 2, 2);
+}
