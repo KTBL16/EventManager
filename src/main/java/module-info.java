@@ -6,6 +6,8 @@ module com.polytechnique.tpfinalpoo2 {
     requires org.kordamp.bootstrapfx.core;
     requires jdk.management;
     requires com.fasterxml.jackson.databind;
+    requires java.mail;
+    requires dotenv.java;
 
     opens com.polytechnique.tpfinalpoo2 to javafx.fxml;
     exports com.polytechnique.tpfinalpoo2;

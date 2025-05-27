@@ -21,6 +21,25 @@ public class GestionParticipant {
         participantOfEvent = SauvegardeParticipantOfEvent.getInstance().charger();
     }
 
+    //getter et setter
+
+
+    public Map<String, ArrayList<String>> getParticipantOfEvent() {
+        return participantOfEvent;
+    }
+
+    public Map<String, Participant> getParticipants() {
+        return participants;
+    }
+
+    public void setParticipantOfEvent(Map<String, ArrayList<String>> participantOfEvent) {
+        this.participantOfEvent = participantOfEvent;
+    }
+
+    public void setParticipants(Map<String, Participant> participants) {
+        this.participants = participants;
+    }
+
     //get instance
     public static GestionParticipant getInstance() {
         if (instance == null) {
@@ -71,6 +90,7 @@ public class GestionParticipant {
     public Participant rechercherParticipant(String id) {
         return participants.get(id);
     }
+
 
 }
 

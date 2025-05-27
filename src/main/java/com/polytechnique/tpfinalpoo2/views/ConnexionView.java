@@ -33,9 +33,9 @@ public class ConnexionView extends Application {
         Label subtitle = new Label("Connexion");
         subtitle.getStyleClass().add("label-subtitle");
 
-        TextField emailField = new TextField();
-        emailField.setPromptText("Email");
-        emailField.getStyleClass().add("input-field");
+        TextField identifiantField = new TextField();
+        identifiantField.setPromptText("Identifiant");
+        identifiantField.getStyleClass().add("input-field");
 
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("Password");
@@ -51,7 +51,7 @@ public class ConnexionView extends Application {
         Label BtnConnexion = new Label("Pas encore de compte ?\nInscrivez-vous.");
         BtnConnexion.getStyleClass().add("label-register");
 
-        formContainer.getChildren().addAll(title, subtitle, emailField, passwordField, buttonContainer, BtnConnexion);
+        formContainer.getChildren().addAll(title, subtitle, identifiantField, passwordField, buttonContainer, BtnConnexion);
         formContainer.setAlignment(Pos.CENTER);
         StackPane.setMargin(formContainer, new Insets(60, 40, 60, 40));
 
@@ -70,9 +70,9 @@ public class ConnexionView extends Application {
 
 
         loginBtn.setOnAction(e -> {
-            String email = emailField.getText();
+            String identifiant = identifiantField.getText();
             String password = passwordField.getText();
-            controller.traiterConnexion(email, password);
+            controller.traiterConnexion(identifiant, password);
         });
 
         BtnConnexion.setOnMouseClicked(e -> {
