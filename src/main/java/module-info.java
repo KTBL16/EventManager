@@ -11,4 +11,6 @@ module com.polytechnique.tpfinalpoo2 {
     exports com.polytechnique.tpfinalpoo2;
     exports com.polytechnique.tpfinalpoo2.views to javafx.graphics;
     exports com.polytechnique.tpfinalpoo2.views.vParticipant to javafx.graphics;
+    exports com.polytechnique.tpfinalpoo2.sauvegarde;
+    opens com.polytechnique.tpfinalpoo2.sauvegarde to javafx.fxml;
 }

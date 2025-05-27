@@ -2,8 +2,8 @@ package com.polytechnique.tpfinalpoo2.services.gestion;
 
 import com.polytechnique.tpfinalpoo2.models.Evenement;
 import com.polytechnique.tpfinalpoo2.models.Participant;
-import com.polytechnique.tpfinalpoo2.SauvegardeParticipant;
-import com.polytechnique.tpfinalpoo2.SauvegardeParticipantOfEvent;
+import com.polytechnique.tpfinalpoo2.sauvegarde.SauvegardeParticipant;
+import com.polytechnique.tpfinalpoo2.sauvegarde.SauvegardeParticipantOfEvent;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -36,13 +36,17 @@ public class GestionParticipant {
         }else {
             participantOfEvent.get(e.getId()).add(p.getId());
             SauvegardeParticipantOfEvent.getInstance().sauvegarder(participantOfEvent);
+            SauvegardeParticipantOfEvent.getInstance().charger();
+            return true;
+        }
+    }
 
-            if (participants.containsKey(p.getId())) {
-            }else {
-                participants.put(p.getId(), p);
-                SauvegardeParticipant.getInstance().sauvegarder(participants);
-                System.out.println("Participant ajouté : " + p.getNom());
-            }
+    public boolean ajouterSimpleParticipant(Participant p) {
+        if (participants.containsKey(p.getId())){
+            return false;
+        }else {
+            participants.put(p.getId(), p);
+            SauvegardeParticipant.getInstance().sauvegarder(participants);
             return true;
         }
     }

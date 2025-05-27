@@ -1,7 +1,7 @@
 package com.polytechnique.tpfinalpoo2.services.gestion;
 
 import com.polytechnique.tpfinalpoo2.models.Evenement;
-import com.polytechnique.tpfinalpoo2.SauvegardeEvenement;
+import com.polytechnique.tpfinalpoo2.sauvegarde.SauvegardeEvenement;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -57,5 +57,11 @@ public class GestionEvenements {
         return evenements.get(id);
     }
 
+    public Map<String, Evenement> getEvenements() {
+        return evenements;
+    }
 
+    public void setEvenements(Map<String, Evenement> evenements) {
+        this.evenements = evenements;
+    }
 }

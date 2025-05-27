@@ -1,4 +1,4 @@
-package com.polytechnique.tpfinalpoo2;
+package com.polytechnique.tpfinalpoo2.sauvegarde;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

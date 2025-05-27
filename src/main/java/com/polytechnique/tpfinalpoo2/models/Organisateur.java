@@ -8,8 +8,8 @@ public class Organisateur extends Participant{
     public Organisateur(){
 
     }
-    public Organisateur(String id, String nom, String email, List<Evenement> evementsOrganises){
-        super(id, nom, email);
+    public Organisateur(String id, String nom, String email, String motDePasse, List<Evenement> evementsOrganises){
+        super(id, nom, email, motDePasse);
         this.evementsOrganises = evementsOrganises;
     }
 

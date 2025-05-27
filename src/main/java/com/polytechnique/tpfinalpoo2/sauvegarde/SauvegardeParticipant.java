@@ -1,53 +1,52 @@
-package com.polytechnique.tpfinalpoo2;
+package com.polytechnique.tpfinalpoo2.sauvegarde;
+
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.polytechnique.tpfinalpoo2.models.Evenement;
+import com.polytechnique.tpfinalpoo2.models.Participant;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+public class SauvegardeParticipant implements Isauvegarde<Participant> {
 
-public class SauvegardeEvenement implements Isauvegarde<Evenement> {
-
-    private static SauvegardeEvenement instance;
-    private static final String cheminfichier = "evenements.json";
+    private static SauvegardeParticipant instance;
+    private static final String cheminfichier = "participants.json";
     private ObjectMapper mapper = new ObjectMapper();
 
 
+
     //get instance
-    public static SauvegardeEvenement getInstance() {
+    public static SauvegardeParticipant getInstance() {
         if (instance == null) {
-            instance = new SauvegardeEvenement();
+            instance = new SauvegardeParticipant();
         }
         return instance;
     }
 
 
     @Override
-    public void sauvegarder(Map<String, Evenement> evenement) {
+    public void sauvegarder(Map<String, Participant> participants) {
         try {
-            mapper.writeValue(new File(cheminfichier), evenement);
+            mapper.writeValue(new File(cheminfichier), participants);
         } catch (IOException e) {
             throw new RuntimeException("Erreur de sauvegarde JSON", e);
         }
     }
 
     @Override
-    public Map<String, Evenement> charger() {
+    public Map<String, Participant> charger() {
         File file = new File(cheminfichier);
         if (file.exists()) {
             try {
-                return mapper.readValue(file, new TypeReference<>() {
-                });
+                return mapper.readValue(file, new TypeReference<>() {});
             } catch (IOException e) {
                 throw new RuntimeException("Erreur de chargement JSON", e);
             }
         }
         return new HashMap<>();
-
     }
-
 }
+
