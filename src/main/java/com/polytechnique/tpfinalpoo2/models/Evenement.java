@@ -4,6 +4,7 @@ package com.polytechnique.tpfinalpoo2.models;
 * classe abstraite représentant un évènement générique*/
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public abstract class Evenement {
 
@@ -12,6 +13,8 @@ public abstract class Evenement {
     private LocalDateTime date;
     private String lieu;
     private int capaciteMax;
+    private String organisateur; //id de l'organisateur
+    private List<String> participants; //id des participants
 
     public Evenement(){
 
@@ -54,15 +57,28 @@ public abstract class Evenement {
     public void setCapaciteMax(int capaciteMax) {
         this.capaciteMax = capaciteMax;
     }
+    public String getOrganisateur() {
+        return organisateur;
+    }
 
+    public void setOrganisateur(String organisateur) {
+        this.organisateur = organisateur;
+    }
 
+    public List<String> getParticipants() {
+        return participants;
+    }
+    public void setParticipants(List<String> participants) {
+        this.participants = participants;
+    }
     abstract public void annuler();
-        // TODO: annuler l'événement
+        //annuler l'événement
 
-    abstract public boolean ajouterParticipant(Participant participant);
-        // TODO: ajouter le participant à l'événement
+    public void ajouterParticipant(Participant participant){
+        participants.add(participant.getEmail());
+    }
 
     abstract public void afficherDetails();
-        // TODO: afficher les détails de l'événement
+        //afficher les détails de l'événement
 
 }

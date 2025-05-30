@@ -35,11 +35,6 @@ public class Conference extends Evenement{
     }
 
     @Override
-    public boolean ajouterParticipant(Participant participant) {
-        return false;
-    }
-
-    @Override
     public void afficherDetails() {
 
     }

@@ -1,113 +1,171 @@
 package com.polytechnique.tpfinalpoo2.services.gestion;
 
+import com.polytechnique.tpfinalpoo2.exception.EvenementExistant;
+import com.polytechnique.tpfinalpoo2.models.Concert;
+import com.polytechnique.tpfinalpoo2.models.Conference;
 import com.polytechnique.tpfinalpoo2.models.Evenement;
-import com.polytechnique.tpfinalpoo2.models.Participant;
-import com.polytechnique.tpfinalpoo2.sauvegarde.SauvegardeEvenement;
-import com.polytechnique.tpfinalpoo2.sauvegarde.SauvegardeParticipant;
-import com.polytechnique.tpfinalpoo2.sauvegarde.SauvegardeParticipantOfEvent;
-import com.polytechnique.tpfinalpoo2.services.notification.INotificationService;
-import com.polytechnique.tpfinalpoo2.services.notification.NotificationService;
+
+import java.util.*;
 
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.stream.Collectors;
+public class GestionEvenements<T extends Evenement> implements Addable<T>, Findable<T>, Editable<T>, Deletable<T> {
+
+    private SauvegardeFactory sauvegardeFactory;
+    private Map<String, T> listEvents;
 
 
-public class GestionEvenements {
+    public GestionEvenements(T evenement) {
 
-    private static GestionEvenements instance;
-    private Map<String, Evenement> evenements;
-    private Map<String, Participant> participants;
-    private Map<String, ArrayList<String>> participantOfEvent;
-    private INotificationService notificationService;
-
-
-    private ArrayList<String> participantsEmails;
-
-
-
-    //Constructeur privé
-    private GestionEvenements() {
-        evenements = new HashMap<>();
-        SauvegardeEvenement.getInstance().charger();
-        participants = SauvegardeParticipant.getInstance().charger();
-        participantOfEvent = SauvegardeParticipantOfEvent.getInstance().charger();
-        notificationService = new NotificationService();
-    }
-
-
-    //get instance
-    public static GestionEvenements getInstance() {
-        if (instance == null) {
-            instance = new GestionEvenements();
+        if(evenement instanceof Concert){
+            listEvents = (Map<String, T>) sauvegardeFactory.createSauvegarde(SauvegardeType.CONCERT).charger();
+        }else if(evenement instanceof Conference){
+            listEvents = (Map<String, T>) sauvegardeFactory.createSauvegarde(SauvegardeType.CONFERENCE).charger();
         }
-        return instance;
+
     }
 
-
-    public void ajouterEvenement(Evenement e) {
-        evenements.put(e.getId(), e);
-        SauvegardeEvenement.getInstance().sauvegarder(evenements);
-        System.out.println("Évènement ajouté : " + e.getNom());
-    }
-
-    public void supprimerEvenement(String id) {
-
-        if (evenements.containsKey(id)) {
-            Evenement e = evenements.remove(id);
-            SauvegardeEvenement.getInstance().sauvegarder(evenements);
-            System.out.println("Évènement supprimé : " + e.getNom());
-            initialiseNotification(e, "L'événement " + e.getNom() + " a été supprimer");
-        } else {
-            System.out.println("❌ Aucun événement avec l’ID : " + id);
+    // ajouter un evenement
+    /*pour ajouter je construis un objet de type evenement puis je construit un evenement de type fille , je fais la recherche
+    dans le fichier des evenement pour faire une recherche et voir s'il existe si il existe je renvoie un erreur si non
+    j'enregistre dans un fichier de type cette classe fille */
+    @Override
+    public T ajouter(T t) throws  EvenementExistant{
+        if(find(t).isPresent()){
+            throw new EvenementExistant("Nous ne pouvez pas creer un evenement qui existe deja");
         }
-    }
-
-    public void editerEvenement(Evenement e) {
-        supprimerEvenement(e.getId());
-        ajouterEvenement(e);
-
-        initialiseNotification(e, "L'événement " + e.getNom() + " a été modifié. Bien vouloir vous rendre dans l'application pour consulter les modifications ");
-    }
-
-    public void initialiseNotification(Evenement e, String message){
-
-        ArrayList<String> participantsIds = participantOfEvent.get(e.getId());
-        participantsEmails = participantsIds.stream()
-                .map(this::getParticipantEmail)
-                .collect(Collectors.toCollection(ArrayList::new));
-
-        if (participantsIds != null) {
-            notificationService.envoyerNotifications(e.getNom(), participantsEmails, message);
+        Map data = new HashMap<String, T>();
+        data.put(t.getId(),t);
+        if(t instanceof Concert){
+            sauvegardeFactory.createSauvegarde(SauvegardeType.CONCERT).sauvegarder(data);
+        }else if(t instanceof Conference){
+            sauvegardeFactory.createSauvegarde(SauvegardeType.CONFERENCE).sauvegarder(data);
         }
+        return t;
     }
 
-    private String getParticipantEmail(String participantId) {
 
-        Participant participant = participants.get(participantId);
-        if (participant != null) {
-            return participant.getEmail();
+
+    // rechercher un evenement
+    /* je liste tous les events et je transforme en flux et je fais une recherche sur le flux si je trouve je retourne l'objet sinon
+    je retourne un objet null */
+
+    @Override
+    public Optional<T> find(T id) {
+        Optional<T> event = Optional.empty();
+
+        if(id instanceof Concert){
+            event = listEvents.values().stream()
+                    .filter(entry -> entry.getId().equals(id.getId()))
+                    .findFirst();
+        }else if(id instanceof Conference){
+            event = listEvents.values().stream()
+                    .filter(entry -> entry.getId().equals(id.getId()))
+                    .findFirst();
         }
+
+        return event;
+    }
+
+
+
+    @Override
+    public void  delete(String id) {
+        listEvents.remove(id);
+        sauvegardeFactory.createSauvegarde(SauvegardeType.CONCERT).sauvegarder((Map<String, ?>)listEvents);
+        sauvegardeFactory.createSauvegarde(SauvegardeType.CONFERENCE).sauvegarder(listEvents);
+    }
+
+    @Override
+    public T edit(String id) {
         return null;
     }
 
 
-    // par exemple pour update un évènement, on doit le rechercher, le supprimer et ajouter la nouvelle instance
-
-    public Evenement rechercherEvenement(String id) {
-        return evenements.get(id);
-    }
 
 
-    //getter et setter
-
-    public Map<String, Evenement> getEvenements() {
-        return evenements;
-    }
-
-    public void setEvenements(Map<String, Evenement> evenements) {
-        this.evenements = evenements;
-    }
+    //delete an event
+    //pour delete un evemnement on récupère son id, et en fonction de la classe T, on suprime
+    //son entré soit dans le fichier conférence soit dans le fichier concert
+    // ensuite su
+    // edit event
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//public void initialiseNotification(T e, String message){
+//    ArrayList<String> participantsIds = participantOfEvent.get(e.getId());
+//    if (participantsIds != null) {
+//        participantsEmails = participantsIds.stream()
+//                .map(this::getParticipantEmail)
+//                .collect(Collectors.toCollection(ArrayList::new));
+//        notificationService.envoyerNotifications(e.getNom(), participantsEmails, message);
+//    }
+//}
+//
+//private String getParticipantEmail(String participantId) {
+//    Participant participant = participants.get(participantId);
+//    return participant != null ? participant.getEmail() : null;
+//}

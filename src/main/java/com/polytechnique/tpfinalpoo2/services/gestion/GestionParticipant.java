@@ -2,8 +2,8 @@ package com.polytechnique.tpfinalpoo2.services.gestion;
 
 import com.polytechnique.tpfinalpoo2.models.Evenement;
 import com.polytechnique.tpfinalpoo2.models.Participant;
-import com.polytechnique.tpfinalpoo2.sauvegarde.SauvegardeParticipant;
-import com.polytechnique.tpfinalpoo2.sauvegarde.SauvegardeParticipantOfEvent;
+import com.polytechnique.tpfinalpoo2.sauvegarde.Sauvegarde;
+
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -13,31 +13,32 @@ public class GestionParticipant {
 
     private static GestionParticipant instance;
     private Map<String, Participant> participants;
-    private Map<String, ArrayList<String>> participantOfEvent;
+    private Map<String, Evenement> event;
+    private String fichierEvent = "evenements.json";
+    private String fichierParticipant = "participants.json";
 
     //Constructeur privé
     private GestionParticipant() {
-        participants = SauvegardeParticipant.getInstance().charger();
-        participantOfEvent = SauvegardeParticipantOfEvent.getInstance().charger();
+        participants = (Map<String, Participant>) Sauvegarde.getIntance().charger(fichierParticipant);
+        event = (Map<String, Evenement>) Sauvegarde.getIntance().charger(fichierEvent);
     }
 
     //getter et setter
-
-
-    public Map<String, ArrayList<String>> getParticipantOfEvent() {
-        return participantOfEvent;
-    }
 
     public Map<String, Participant> getParticipants() {
         return participants;
     }
 
-    public void setParticipantOfEvent(Map<String, ArrayList<String>> participantOfEvent) {
-        this.participantOfEvent = participantOfEvent;
-    }
-
     public void setParticipants(Map<String, Participant> participants) {
         this.participants = participants;
+    }
+
+    public Map<String, Evenement> getEvent() {
+        return event;
+    }
+
+    public void setEvent(Map<String, Evenement> event) {
+        this.event = event;
     }
 
     //get instance
@@ -49,22 +50,21 @@ public class GestionParticipant {
     }
 
 
-    public boolean ajouterParticipant(Participant p, Evenement e) {
-        if (participantOfEvent.size() == e.getCapaciteMax()){
+    public boolean ajouterParticipant(Participant p, String eventId) {
+        if (event.get(eventId).getParticipants().size() == event.get(eventId).getCapaciteMax()){
             return false;
         }else {
-            participantOfEvent.get(e.getId()).add(p.getId());
-            SauvegardeParticipantOfEvent.getInstance().sauvegarder(participantOfEvent);
-            SauvegardeParticipantOfEvent.getInstance().charger();
+            event.get(eventId).ajouterParticipant(p);
+            Sauvegarde.getIntance().sauvegarder(event, fichierEvent);
             return true;
         }
     }
 
     public boolean ajouterSimpleParticipant(Participant p) {
-        if (participants.containsKey(p.getId())){
+        if (participants.containsKey(p.getEmail())){
             return false;
         }else {
-            participants.put(p.getId(), p);
+            participants.put(p.getEmail(), p);
             SauvegardeParticipant.getInstance().sauvegarder(participants);
             return true;
         }
